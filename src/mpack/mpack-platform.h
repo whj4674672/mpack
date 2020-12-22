@@ -80,7 +80,7 @@
  * be defined here in order to support -Wundef.
  */
 #ifndef MPACK_DEBUG
-#define MPACK_DEBUG 0
+#define MPACK_DEBUG 1
 #endif
 #ifndef MPACK_CUSTOM_BREAK
 #define MPACK_CUSTOM_BREAK 0
@@ -651,7 +651,7 @@ MPACK_EXTERN_C_START
  * because assert is noreturn and break isn't. This distinction is very
  * important for static analysis tools to give correct results.
  */
-
+#define MPACK_DEBUG 0
 #if MPACK_DEBUG
 
     /**

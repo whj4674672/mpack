@@ -16,15 +16,20 @@ from building import *
 cwd = GetCurrentDir()
 
 src = Split("""
-src/mpack/mpack_common.c
-src/mpack/mpack_expect.c
-src/mpack/mpack_node.c
-src/mpack/mpack_platform.c
-src/mpack/mpack_reader.c
-src/mpack/mpack_riter.c
+src/mpack/mpack-common.c
+src/mpack/mpack-expect.c
+src/mpack/mpack-node.c
+src/mpack/mpack-platform.c
+src/mpack/mpack-reader.c
+src/mpack/mpack-riter.c
 """)
 
 CPPPATH = [cwd + '/src/mpack']
+
+if GetDepend(['PKG_USING_MSGPACK_EXAMPLE']):
+    src += [('/examples/sax-example.c')]
+    CPPPATH += [cwd + '/examples']
+
 
 group = DefineGroup('msgpack', src, depend = ['PKG_USING_MSGPACK'], CPPPATH = CPPPATH)
 
