@@ -53,13 +53,13 @@ void mpack_assert_fail(const char* message) {
     longjmp(test_jmp_buf, 1);
 }
 
-void mpack_break_hit(const char* message) {
-    if (!test_break_set) {
-        TEST_TRUE(false, "break hit! %s", message);
-        abort();
-    }
-    test_break_hit = true;
-}
+//void mpack_break_hit(const char* message) {
+//    if (!test_break_set) {
+//        TEST_TRUE(false, "break hit! %s", message);
+//        abort();
+//    }
+//    test_break_hit = true;
+//}
 #endif
 
 void test_true_impl(bool result, const char* file, int line, const char* format, ...) {
@@ -80,7 +80,34 @@ void test_true_impl(bool result, const char* file, int line, const char* format,
     }
 }
 
-int main(void) {
+int msgpack_sample(void) {
+    
+    // encode to memory buffer
+char* data;
+size_t size;
+mpack_writer_t writer;
+mpack_writer_init_growable(&writer, &data, &size);
+
+// write the example on the msgpack homepage
+mpack_start_map(&writer, 2);
+mpack_write_cstr(&writer, "compact");
+mpack_write_bool(&writer, true);
+mpack_write_cstr(&writer, "schema");
+mpack_write_uint(&writer, 0);
+mpack_finish_map(&writer);
+
+// finish writing
+if (mpack_writer_destroy(&writer) != mpack_ok) {
+    fprintf(stderr, "An error occurred encoding the data!\n");
+    return 1;
+}
+
+// use the data
+//do_something_with_data(data, size);
+free(data);
+
+
+    extern void test_system(void);
     printf("\n\n");
 
     test_system();
@@ -89,22 +116,22 @@ int main(void) {
     #if MPACK_READER
     test_reader();
     #endif
-    #if MPACK_EXPECT
-    test_expect();
-    #endif
+//    #if MPACK_EXPECT
+//    test_expect();
+//    #endif
     #if MPACK_WRITER
     test_writes();
     #endif
-    #if MPACK_NODE
-    test_node();
-    #endif
-    #if MPACK_STDIO
-    test_file();
-    #endif
+//    #if MPACK_NODE
+//    test_node();
+//    #endif
+////    #if MPACK_STDIO
+////    test_file();
+////    #endif
 
-    test_buffers();
+//    test_buffers();
 
     printf("\n\nUnit testing complete. %i failures in %i checks.\n\n\n", tests - passes, tests);
     return (passes == tests) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
-
+MSH_CMD_EXPORT(msgpack_sample, psgpack sample);

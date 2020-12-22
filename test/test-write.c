@@ -1138,6 +1138,7 @@ static void test_misc(void) {
     #if MPACK_STDLIB
     // writing strings larger than 32 bits should fail
     if (UINT32_MAX < SIZE_MAX) {
+extern void test_system_mock_strlen(size_t len);
         char single[1];
 
         mpack_writer_init(&writer, single, SIZE_MAX);
@@ -1242,6 +1243,7 @@ void test_writes() {
     #endif
 
     #ifdef MPACK_MALLOC
+extern void test_system_fail_until_ok(bool (*test)(void));
     test_write_tag_tracking();
     test_write_basic_structures();
     test_write_small_structure_trees();

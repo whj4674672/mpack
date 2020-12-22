@@ -328,7 +328,7 @@ static bool mpack_tree_parse_children(mpack_tree_t* tree, mpack_node_data_t* nod
                 return false;
             }
             mpack_log("allocated seperate page %p for %i children, %i left in page of %i total\n",
-                    (void*)page, (int)total, (int)parser->nodes_left, (int)MPACK_NODES_PER_PAGE);
+                    page, (int)total, (int)parser->nodes_left, (int)MPACK_NODES_PER_PAGE);
 
             node->value.children = page->nodes;
 
@@ -339,7 +339,7 @@ static bool mpack_tree_parse_children(mpack_tree_t* tree, mpack_node_data_t* nod
                 return false;
             }
             mpack_log("allocated new page %p for %i children, wasting %i in page of %i total\n",
-                    (void*)page, (int)total, (int)parser->nodes_left, (int)MPACK_NODES_PER_PAGE);
+                    page, (int)total, (int)parser->nodes_left, (int)MPACK_NODES_PER_PAGE);
 
             node->value.children = page->nodes;
             parser->nodes = page->nodes + total;
@@ -823,7 +823,7 @@ static void mpack_tree_cleanup(mpack_tree_t* tree) {
     mpack_tree_page_t* page = tree->next;
     while (page != NULL) {
         mpack_tree_page_t* next = page->next;
-        mpack_log("freeing page %p\n", (void*)page);
+        mpack_log("freeing page %p\n", page);
         MPACK_FREE(page);
         page = next;
     }
@@ -891,7 +891,7 @@ static bool mpack_tree_parse_start(mpack_tree_t* tree) {
         // allocate first page
         mpack_tree_page_t* page = (mpack_tree_page_t*)MPACK_MALLOC(MPACK_PAGE_ALLOC_SIZE);
         mpack_log("allocated initial page %p of size %i count %i\n",
-                (void*)page, (int)MPACK_PAGE_ALLOC_SIZE, (int)MPACK_NODES_PER_PAGE);
+                page, (int)MPACK_PAGE_ALLOC_SIZE, (int)MPACK_NODES_PER_PAGE);
         if (page == NULL) {
             tree->error = mpack_error_memory;
             return false;
@@ -1218,7 +1218,7 @@ mpack_error_t mpack_tree_destroy(mpack_tree_t* tree) {
 
 void mpack_tree_flag_error(mpack_tree_t* tree, mpack_error_t error) {
     if (tree->error == mpack_ok) {
-        mpack_log("tree %p setting error %i: %s\n", (void*)tree, (int)error, mpack_error_to_string(error));
+        mpack_log("tree %p setting error %i: %s\n", tree, (int)error, mpack_error_to_string(error));
         tree->error = error;
         if (tree->error_fn)
             tree->error_fn(tree, error);
@@ -2099,14 +2099,6 @@ unsigned int mpack_node_uint(mpack_node_t node) {
     // This should be true at compile-time, so this just wraps the 32-bit function.
     if (sizeof(unsigned int) == 4)
         return (unsigned int)mpack_node_u32(node);
-
-    // Otherwise we use u64 and check the range.
-    uint64_t val = mpack_node_u64(node);
-    if (val <= UINT_MAX)
-        return (unsigned int)val;
-
-    mpack_node_flag_error(node, mpack_error_type);
-    return 0;
 }
 
 int mpack_node_int(mpack_node_t node) {
@@ -2114,14 +2106,6 @@ int mpack_node_int(mpack_node_t node) {
     // This should be true at compile-time, so this just wraps the 32-bit function.
     if (sizeof(int) == 4)
         return (int)mpack_node_i32(node);
-
-    // Otherwise we use i64 and check the range.
-    int64_t val = mpack_node_i64(node);
-    if (val >= INT_MIN && val <= INT_MAX)
-        return (int)val;
-
-    mpack_node_flag_error(node, mpack_error_type);
-    return 0;
 }
 
 float mpack_node_float(mpack_node_t node) {

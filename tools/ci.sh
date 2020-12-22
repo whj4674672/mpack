@@ -30,18 +30,18 @@ pwd
 if [[ "$CC" == "scan-build" ]]; then
     unset CC
     unset CXX
-    scan-build -o analysis --use-cc=`which clang` --status-bugs tools/unittest.lua
+    scan-build -o analysis --use-cc=`which clang` --status-bugs scons
 
 elif [[ "$CC" == "gcov" ]]; then
     unset CC
     unset CXX
-    tools/unittest.lua run-coverage
+    scons gcov=1
     tools/gcov.sh
-    pip install --user idna==2.5 # below packages conflict with idna-2.6 (not sure if this is still necessary on bionic)
+    pip install --user idna==2.5 # below packages conflict with idna-2.6
     pip install --user cpp-coveralls urllib3[secure]
     coveralls --no-gcov --include src
 
 else
-    tools/unittest.lua all
+    scons all=1
 
 fi

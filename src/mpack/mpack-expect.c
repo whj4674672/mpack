@@ -536,13 +536,6 @@ size_t mpack_expect_bin_buf(mpack_reader_t* reader, char* buf, size_t bufsize) {
     return binsize;
 }
 
-void mpack_expect_bin_size_buf(mpack_reader_t* reader, char* buf, uint32_t size) {
-    mpack_assert(buf != NULL, "buf cannot be NULL");
-    mpack_expect_bin_size(reader, size);
-    mpack_read_bytes(reader, buf, size);
-    mpack_done_bin(reader);
-}
-
 #if MPACK_EXTENSIONS
 uint32_t mpack_expect_ext(mpack_reader_t* reader, int8_t* type) {
     mpack_tag_t var = mpack_read_tag(reader);
@@ -648,7 +641,7 @@ void mpack_expect_str_match(mpack_reader_t* reader, const char* str, size_t len)
     mpack_expect_str_length(reader, (uint32_t)len);
     if (mpack_reader_error(reader))
         return;
-    mpack_reader_track_bytes(reader, (uint32_t)len);
+    mpack_reader_track_bytes(reader, len);
 
     // check each byte one by one (matched strings are likely to be very small)
     for (; len > 0; --len) {

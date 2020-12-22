@@ -679,6 +679,7 @@ static void test_expect_str() {
     TEST_SIMPLE_READ_ERROR("\xa3""abz", (mpack_expect_cstr_match(&reader, "abc"), true), mpack_error_type);
 
     #if MPACK_STDLIB
+    extern void test_system_mock_strlen(size_t len);
     // str/cstr match larger than 32 bits
     if (UINT32_MAX < SIZE_MAX) {
         test_system_mock_strlen((size_t)((uint64_t)UINT32_MAX + UINT64_C(1)));
@@ -837,13 +838,6 @@ static void test_expect_bin() {
     TEST_SIMPLE_READ_ERROR("\x01", NULL == mpack_expect_bin_alloc(&reader, 3, &length), mpack_error_type);
     #endif
 
-}
-
-static void test_expect_bin_size_buf() {
-    char buf[256];
-    TEST_SIMPLE_READ("\xc4\x00", (mpack_expect_bin_size_buf(&reader, buf, 0), true));
-    TEST_SIMPLE_READ("\xc4\x05hello", (mpack_expect_bin_size_buf(&reader, buf, 5), 0 == memcmp(buf, "hello", 5)));
-    TEST_SIMPLE_READ_ERROR("\xc4\x04test", (mpack_expect_bin_size_buf(&reader, buf, 5), true), mpack_error_type);
 }
 
 #if MPACK_EXTENSIONS
@@ -1309,7 +1303,6 @@ void test_expect() {
     // compound types
     test_expect_str();
     test_expect_bin();
-    test_expect_bin_size_buf();
     test_expect_arrays();
     test_expect_maps();
 

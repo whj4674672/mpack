@@ -10,7 +10,7 @@
 #define MPACK_DEBUG 1
 #endif
 
-#ifdef MPACK_VARIANT_BUILDS
+#ifdef MPACK_SCONS
     // Most options such as featureset and platform configuration
     // are specified by the SCons buildsystem. Any options that are
     // unset on the command line are considered disabled.
@@ -46,11 +46,6 @@
     // override their functions.
     #define MPACK_STDLIB 1
     #define MPACK_STDIO 1
-#endif
-
-// We've disabled the unit test for single inline under tcc.
-#ifdef __TINYC__
-#define MPACK_DISABLE_TINYC_INLINE_WARNING
 #endif
 
 // We replace the file i/o functions to simulate failures

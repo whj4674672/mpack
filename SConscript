@@ -21,14 +21,21 @@ src/mpack/mpack-expect.c
 src/mpack/mpack-node.c
 src/mpack/mpack-platform.c
 src/mpack/mpack-reader.c
-src/mpack/mpack-riter.c
+src/mpack/mpack-writer.c
 """)
 
-CPPPATH = [cwd + '/src/mpack']
+CPPPATH = [cwd + '/src']
 
 if GetDepend(['PKG_USING_MSGPACK_EXAMPLE']):
-    src += [('/examples/sax-example.c')]
-    CPPPATH += [cwd + '/examples']
+    src += [cwd + '/test/test.c']
+    src += [cwd + '/test/test-system.c']
+    src += [cwd + '/test/test-common.c']
+    src += [cwd + '/test/test-reader.c']
+    src += [cwd + '/test/test-expect.c']
+    src += [cwd + '/test/test-write.c']
+    src += [cwd + '/test/test-node.c']
+    src += [cwd + '/test/test-buffer.c']
+    CPPPATH += [cwd + '/test']
 
 
 group = DefineGroup('msgpack', src, depend = ['PKG_USING_MSGPACK'], CPPPATH = CPPPATH)

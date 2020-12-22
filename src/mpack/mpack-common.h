@@ -35,7 +35,6 @@
 #endif
 
 MPACK_HEADER_START
-MPACK_EXTERN_C_START
 
 
 
@@ -1005,12 +1004,7 @@ MPACK_INLINE void mpack_store_double(char* p, double value) {
 
 typedef struct mpack_track_element_t {
     mpack_type_t type;
-    uint32_t left;
-
-    // indicates that a value still needs to be read/written for an already
-    // read/written key. left is not decremented until both key and value are
-    // read/written.
-    bool key_needs_value;
+    uint64_t left; // we need 64-bit because (2 * INT32_MAX) elements can be stored in a map
 } mpack_track_element_t;
 
 typedef struct mpack_track_t {
@@ -1022,12 +1016,12 @@ typedef struct mpack_track_t {
 #if MPACK_INTERNAL
 mpack_error_t mpack_track_init(mpack_track_t* track);
 mpack_error_t mpack_track_grow(mpack_track_t* track);
-mpack_error_t mpack_track_push(mpack_track_t* track, mpack_type_t type, uint32_t count);
+mpack_error_t mpack_track_push(mpack_track_t* track, mpack_type_t type, uint64_t count);
 mpack_error_t mpack_track_pop(mpack_track_t* track, mpack_type_t type);
 mpack_error_t mpack_track_element(mpack_track_t* track, bool read);
 mpack_error_t mpack_track_peek_element(mpack_track_t* track, bool read);
-mpack_error_t mpack_track_bytes(mpack_track_t* track, bool read, size_t count);
-mpack_error_t mpack_track_str_bytes_all(mpack_track_t* track, bool read, size_t count);
+mpack_error_t mpack_track_bytes(mpack_track_t* track, bool read, uint64_t count);
+mpack_error_t mpack_track_str_bytes_all(mpack_track_t* track, bool read, uint64_t count);
 mpack_error_t mpack_track_check_empty(mpack_track_t* track);
 mpack_error_t mpack_track_destroy(mpack_track_t* track, bool cancel);
 #endif
@@ -1074,7 +1068,6 @@ bool mpack_str_check_no_null(const char* str, size_t bytes);
  * @}
  */
 
-MPACK_EXTERN_C_END
 MPACK_HEADER_END
 
 #endif

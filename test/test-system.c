@@ -55,6 +55,16 @@ static bool test_system_should_fail(void) {
     return false;
 }
 #endif
+static size_t test_malloc_active = 0;
+
+size_t test_malloc_active_count(void) {
+    return test_malloc_active;
+}
+static size_t test_files_active = 0;
+
+size_t test_files_count(void) {
+    return test_files_active;
+}
 
 void test_system_fail_until_ok(bool (*test)(void)) {
     #ifdef MPACK_MALLOC
@@ -98,22 +108,15 @@ void test_system_fail_until_ok(bool (*test)(void)) {
 void test_system(void) {
     #ifdef MPACK_MALLOC
     TEST_TRUE(test_malloc_active_count() == 0);
-    TEST_TRUE(NULL == mpack_realloc(NULL, 0, 0));
+    TEST_TRUE(NULL == mpack_realloc(NULL, 0, 0)); //mpack_realloc return not NULL ,so result FALSE 
     void* p = MPACK_MALLOC(1);
-    TEST_TRUE(NULL == mpack_realloc(p, 1, 0));
+    TEST_TRUE(NULL == mpack_realloc(p, 1, 0)); //mpack_realloc return NULL ,so result TRUE
     TEST_TRUE(test_malloc_active_count() == 0, "realloc leaked");
     #endif
 }
 
-
-
 #ifdef MPACK_MALLOC
-static size_t test_malloc_active = 0;
 static size_t test_malloc_total = 0;
-
-size_t test_malloc_active_count(void) {
-    return test_malloc_active;
-}
 
 size_t test_malloc_total_count(void) {
     return test_malloc_total;
@@ -192,12 +195,6 @@ size_t test_strlen(const char* s) {
 #undef fseek
 #undef ftell
 #undef ferror
-
-static size_t test_files_active = 0;
-
-size_t test_files_count(void) {
-    return test_files_active;
-}
 
 FILE* test_fopen(const char* path, const char* mode) {
     if (test_system_should_fail()) {

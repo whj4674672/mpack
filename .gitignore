@@ -13,8 +13,6 @@ mpack-test-blank-file
 /analysis/
 /docs/html/
 /vgcore.*
-/.ninja_deps
-/.ninja_log
 
 # visual studio project
 *.suo
@@ -34,3 +32,4 @@ xcuserdata/
 # other junk
 .directory
 /tags
+

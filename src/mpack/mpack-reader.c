@@ -209,7 +209,7 @@ size_t mpack_reader_remaining(mpack_reader_t* reader, const char** data) {
 }
 
 void mpack_reader_flag_error(mpack_reader_t* reader, mpack_error_t error) {
-    mpack_log("reader %p setting error %i: %s\n", (void*)reader, (int)error, mpack_error_to_string(error));
+    mpack_log("reader %p setting error %i: %s\n", reader, (int)error, mpack_error_to_string(error));
 
     if (reader->error == mpack_ok) {
         reader->error = error;
@@ -232,7 +232,7 @@ MPACK_NOINLINE static size_t mpack_fill_range(mpack_reader_t* reader, char* p, s
         size_t read = reader->fill(reader, p + count, max_bytes - count);
 
         // Reader fill functions can flag an error or return 0 on failure. We
-        // also guard against functions that return -1 just in case.
+        // also guard against functions that -1 just in case.
         if (mpack_reader_error(reader) != mpack_ok)
             return 0;
         if (read == 0 || read == ((size_t)(-1))) {
@@ -394,13 +394,12 @@ void mpack_skip_bytes(mpack_reader_t* reader, size_t count) {
     if (mpack_reader_error(reader) != mpack_ok)
         return;
     mpack_log("skip requested for %i bytes\n", (int)count);
-
     mpack_reader_track_bytes(reader, count);
 
     // check if we have enough in the buffer already
     size_t left = (size_t)(reader->end - reader->data);
     if (left >= count) {
-        mpack_log("skipping %u bytes still in buffer\n", (uint32_t)count);
+        mpack_log("skipping %i bytes still in buffer\n", (int)count);
         reader->data += count;
         return;
     }

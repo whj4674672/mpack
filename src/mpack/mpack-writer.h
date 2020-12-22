@@ -30,10 +30,9 @@
 
 #include "mpack-common.h"
 
-#if MPACK_WRITER
-
 MPACK_HEADER_START
-MPACK_EXTERN_C_START
+
+#if MPACK_WRITER
 
 #if MPACK_WRITE_TRACKING
 struct mpack_track_t;
@@ -134,12 +133,12 @@ struct mpack_writer_t {
 };
 
 #if MPACK_WRITE_TRACKING
-void mpack_writer_track_push(mpack_writer_t* writer, mpack_type_t type, uint32_t count);
+void mpack_writer_track_push(mpack_writer_t* writer, mpack_type_t type, uint64_t count);
 void mpack_writer_track_pop(mpack_writer_t* writer, mpack_type_t type);
 void mpack_writer_track_element(mpack_writer_t* writer);
 void mpack_writer_track_bytes(mpack_writer_t* writer, size_t count);
 #else
-MPACK_INLINE void mpack_writer_track_push(mpack_writer_t* writer, mpack_type_t type, uint32_t count) {
+MPACK_INLINE void mpack_writer_track_push(mpack_writer_t* writer, mpack_type_t type, uint64_t count) {
     MPACK_UNUSED(writer);
     MPACK_UNUSED(type);
     MPACK_UNUSED(count);
@@ -904,7 +903,7 @@ MPACK_INLINE void mpack_finish_type(mpack_writer_t* writer, mpack_type_t type) {
  * @}
  */
 
-#if MPACK_HAS_GENERIC && !defined(__cplusplus)
+#if MPACK_WRITER && MPACK_HAS_GENERIC && !defined(__cplusplus)
 
 /**
  * @name Type-Generic Writers
@@ -968,20 +967,23 @@ MPACK_INLINE void mpack_finish_type(mpack_writer_t* writer, mpack_type_t type) {
  * @}
  */
 
-#endif // MPACK_HAS_GENERIC && !defined(__cplusplus)
+#endif
 
-// The rest of this file contains C++ overloads, so we end extern "C" here.
-MPACK_EXTERN_C_END
+/**
+ * @}
+ */
+
+#endif
+
+MPACK_HEADER_END
 
 #if defined(__cplusplus) || defined(MPACK_DOXYGEN)
 
-/**
- * @name C++ write overloads
- * @{
- */
-
 /*
  * C++ generic writers for primitive values
+ *
+ * These currently sit outside of MPACK_HEADER_END because it defines
+ * extern "C". They'll be moved to a C++-specific header soon.
  */
 
 #ifdef MPACK_DOXYGEN
@@ -1107,19 +1109,6 @@ MPACK_INLINE void mpack_write_kv(mpack_writer_t* writer, const char *key, const 
     mpack_write_cstr(writer, key);
     mpack_write_cstr_or_nil(writer, value);
 }
-
-/**
- * @}
- */
-
 #endif /* __cplusplus */
-
-/**
- * @}
- */
-
-MPACK_HEADER_END
-
-#endif // MPACK_WRITER
 
 #endif

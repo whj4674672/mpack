@@ -554,6 +554,7 @@ static void test_node_read_possible() {
             "\xdd\xff\xff\xff\xff\xdd\xff\xff\xff\xff\xdd\xff\xff\xff\xff\xdd\xff\xff\xff\xff"
             "\xdd\xff\xff\xff\xff\xdd\xff\xff\xff\xff\xdd\xff\xff\xff\xff\xdd\xff\xff\xff\xff"
             "\xdd\xff\xff\xff\xff\xdd\xff\xff\xff\xff\xdd\xff\xff\xff\xff\xdd\xff\xff\xff\xff";
+    extern size_t test_malloc_total_count(void);
     size_t allocation_count = test_malloc_total_count();
     mpack_tree_t tree;
     mpack_tree_init(&tree, attack, strlen(attack));
@@ -1307,6 +1308,7 @@ void test_node(void) {
     // message streams
     test_node_multiple_simple();
     #ifdef MPACK_MALLOC
+    extern void test_system_fail_until_ok(bool (*test)(void));
     test_system_fail_until_ok(&test_node_multiple_allocs_memory);
     test_system_fail_until_ok(&test_node_multiple_allocs_stream1);
     test_system_fail_until_ok(&test_node_multiple_allocs_stream2);

@@ -16,6 +16,8 @@ The MPack featureset can be customized at compile-time to set which features, co
 
 ## Build Status
 
+MPack is beta software under development.
+
 [travis-home]: https://travis-ci.org/
 [travis-mpack]: https://travis-ci.org/ludocode/mpack/branches
 [appveyor-home]: https://ci.appveyor.com/
@@ -99,22 +101,23 @@ MPack is rich in features while maintaining very high performance and a small co
 [mpack]: https://github.com/ludocode/mpack
 [msgpack-c]: https://github.com/msgpack/msgpack-c
 [cmp]: https://github.com/camgunz/cmp
-[cwpack]: https://github.com/clwi/CWPack
 
-|    | [MPack][mpack]<br>(v1.1) | [msgpack-c][msgpack-c]<br>(v3.2.0) | [CMP][cmp]<br>(v18) | [CWPack][cwpack]<br>(v1.1) |
-|:------------------------------------|:---:|:---:|:---:|:---:|
-| No libc requirement                 | ✓   |     | ✓   | ✓   |
-| Growable memory writer              | ✓   | ✓   |     | ✓\* |
-| File I/O helpers                    | ✓   | ✓   |     | ✓\* |
-| Propagating errors                  | ✓   |     | ✓   |     |
-| Incremental parser                  | ✓   |     | ✓   | ✓   |
-| Tree stream parser                  | ✓   | ✓   |     |     |
-| Compound size tracking              | ✓   |     |     |     |
-| Automatic compound size             |     |     |     |     |
+|    | [MPack][mpack]<br>(v0.8) | [msgpack-c][msgpack-c]<br>(v1.3.0) | [CMP][cmp]<br>(v14) |
+|:------------------------------------|:---:|:---:|:---:|
+| No libc requirement                 | ✓   |     | ✓   |
+| Growable memory writer              | ✓   | ✓   |     |
+| File I/O helpers                    | ✓   | ✓   |     |
+| Tree parser                         | ✓   | ✓   |     |
+| Propagating errors                  | ✓   |     | ✓   |
+| Compound size tracking              | ✓   |     |     |
+| Incremental parser                  | ✓   |     | ✓   |
+| Incremental range/match helpers     | ✓   |     |     |
+| Tree stream parser                  |     | ✓   |     |
+| UTF-8 verification                  | ✓   |     |     |
 
 A larger feature comparison table is available [here](docs/features.md) which includes descriptions of the various entries in the table.
 
-[This benchmarking suite](https://github.com/ludocode/schemaless-benchmarks) compares the performance of MPack to other implementations of schemaless serialization formats. MPack outperforms all JSON and MessagePack libraries (except [CWPack][cwpack]), and in some tests MPack is several times faster than [RapidJSON](https://github.com/miloyip/rapidjson) for equivalent data.
+[This benchmarking suite](https://github.com/ludocode/schemaless-benchmarks) compares the performance of MPack to other implementations of schemaless serialization formats. MPack outperforms all JSON and MessagePack libraries, and in some tests MPack is several times faster than [RapidJSON](https://github.com/miloyip/rapidjson) for equivalent data.
 
 ## Why Not Just Use JSON?
 
@@ -132,8 +135,12 @@ The above issues greatly increase the complexity of the decoder. Full-featured J
 
 While the space inefficiencies of JSON can be partially mitigated through minification and compression, the performance inefficiencies cannot. More importantly, if you are minifying and compressing the data, then why use a human-readable format in the first place?
 
-## Testing MPack
+## Running the Unit Tests
 
 The MPack build process does not build MPack into a library; it is used to build and run the unit tests. You do not need to build MPack or the unit testing suite to use MPack.
 
-See [test/README.md](test/README.md) for information on how to test MPack.
+On Linux, the test suite uses SCons and requires Valgrind, and can be run in the repository or in the amalgamation package. Run `scons` to build and run the test suite in full debug configuration.
+
+On Windows, there is a Visual Studio solution, and on OS X, there is an Xcode project for building and running the test suite.
+
+You can also build and run the test suite in all supported configurations, which is what the continuous integration server will build and run. If you are on 64-bit, you will need support for cross-compiling to 32-bit, and running 32-bit binaries with 64-bit Valgrind. On Ubuntu, you'll need `libc6-dbg:i386`. On Arch you'll need `gcc-multilib` or `lib32-clang`, and `valgrind-multilib`. Use `scons all=1 -j16` (or some appropriate thread count) to build and run all tests.
